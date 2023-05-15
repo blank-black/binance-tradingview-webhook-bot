@@ -136,7 +136,7 @@ class BinanceFutureHttpClient(object):
             self.order_count += 1
             return "x-cLbi5uMH" + str(self._timestamp()) + str(self.order_count)
 
-    def place_order(self, symbol: str, order_side: OrderSide, order_type: OrderType, quantity: Decimal, price: Decimal,
+    def place_order(self, symbol: str, order_side: OrderSide, order_type: OrderType, quantity: Decimal, price=None,
                     time_inforce="GTC", client_order_id=None, recvWindow=5000, stop_price=0):
 
         """
@@ -165,7 +165,7 @@ class BinanceFutureHttpClient(object):
         params = {
             "symbol": symbol,
             "side": order_side.value,
-            "type": 'LIMIT',
+            "type": order_type.value,
             "quantity": quantity,
             "price": price,
             "recvWindow": recvWindow,
@@ -177,8 +177,7 @@ class BinanceFutureHttpClient(object):
             params['type'] = 'LIMIT'
             params['timeInForce'] = time_inforce
         elif order_type == OrderType.MARKET:
-            if params.get('price', None):
-                del params['price']
+            del params['price']
 
         elif order_type == OrderType.MAKER:
             params['type'] = 'LIMIT'
